@@ -14,6 +14,8 @@ from linebot.models import (
 import logging
 logging.getLogger().setLevel('DEBUG')
 
+import calculuseal.settings
+
 # app = Flask(__name__)
 
 line_bot_api = LineBotApi('ncgm9HizxV7Z1qyLCQtYTlLfH77C497/1LflP9CroAgEavL6BxyQK6JFY2Joa02EnXx8MUtGjrpGN8ueV2dEbSrsi/nyHgE5aQVw79jnKI8yqQtHvkvBKGYnOWCb6bosC4qhWmfdnANYspooKzmsnQdB04t89/1O/w1cDnyilFU=')
@@ -23,12 +25,12 @@ handler = WebhookHandler('90710d30a6a5618caea6ef52bc0fed7e')
 # @app.route("/callback", methods=['POST'])
 # def callback():
 def webhook(request):
-    if request.method == 'POST':
+    if calculuseal.settings.DEBUG == True or request.method == 'POST':
         # get X-Line-Signature header value
-        signature = request.headers['X-Line-Signature']
+        signature = request.META['HTTP_X_LINE_SIGNATURE']
 
         # get request body as text
-        body = request.body
+        body = request.body.decode()
         logging.info("Request body: " + body)
 
         logging.debug(f'signature: {signature}')
