@@ -11,6 +11,7 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
 
+import threading
 import logging
 logging.getLogger().setLevel('DEBUG')
 
@@ -35,14 +36,15 @@ def webhook(request):
 
         logging.debug(f'signature: {signature}')
 
-        return HttpResponse()
-
         # handle webhook body
         try:
             handler.handle(body, signature)
         except InvalidSignatureError:
             # abort(400)
             return HttpResponseForbidden('invalid signature')
+
+        # reply 200 OK within one second (otherwise LINE will see it as bad request)
+        return HttpResponse()
 
     return HttpResponseForbidden()
 
@@ -51,6 +53,9 @@ def webhook(request):
 def handle_message(event):
     logging.debug('handle_message')
     logging.debug(f'reply_token: {event.reply_token}')
+    threading.Thread(target=reply_to_line, args=(event.reply_token, event.message.text))
+
+def reply_to_line(reply_token, text):
     line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=event.message.text))
+        reply_token,
+        TextSendMessage(text=text))
