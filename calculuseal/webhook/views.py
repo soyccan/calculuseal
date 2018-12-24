@@ -35,6 +35,8 @@ def webhook(request):
 
         logging.debug(f'signature: {signature}')
 
+        return HttpResponse()
+
         # handle webhook body
         try:
             handler.handle(body, signature)
@@ -42,7 +44,6 @@ def webhook(request):
             # abort(400)
             return HttpResponseForbidden('invalid signature')
 
-        return 'OK'
     return HttpResponseForbidden()
 
 
