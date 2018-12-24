@@ -351,3 +351,25 @@ CREATE INDEX "django_session_expire_date_a5c62663" ON "django_session" ("expire_
 (0.000) BEGIN; args=None
 (0.000) INSERT INTO "auth_permission" ("name", "content_type_id", "codename") SELECT 'Can add session', 6, 'add_session' UNION ALL SELECT 'Can change session', 6, 'change_session' UNION ALL SELECT 'Can delete session', 6, 'delete_session' UNION ALL SELECT 'Can view session', 6, 'view_session'; args=('Can add session', 6, 'add_session', 'Can change session', 6, 'change_session', 'Can delete session', 6, 'delete_session', 'Can view session', 6, 'view_session')
 (0.000) SELECT "django_content_type"."id", "django_content_type"."app_label", "django_content_type"."model" FROM "django_content_type" WHERE "django_content_type"."app_label" = 'sessions'; args=('sessions',)
+(0.001) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+Not Found: /
+"GET / HTTP/1.1" 404 1927
+Forbidden: /webhook
+"GET /webhook HTTP/1.1" 403 0
+Forbidden: /webhook
+"GET /webhook HTTP/1.1" 403 0
+Forbidden: /webhook
+"GET /webhook HTTP/1.1" 403 0
+Forbidden: /webhook
+"GET /webhook HTTP/1.1" 403 0
+code 400, message Bad request syntax ("\x16\x03\x01\x00½\x01\x00\x00¹\x03\x03n´ü\x97QËÙ\x08>jd\x1bY¨þ¡rjªp:|\x84Îhþç\x8c+4Îè\x00\x008À,À0\x00\x9fÌ©Ì¨ÌªÀ+À/\x00\x9eÀ$À(\x00kÀ#À'\x00gÀ")
+You're accessing the development server over HTTPS, but it only supports HTTP.
+
+Forbidden: /webhook
+"GET /webhook HTTP/1.1" 403 0
+Forbidden (CSRF cookie not set.): /webhook
+"POST /webhook HTTP/1.1" 403 2868

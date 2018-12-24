@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -37,9 +37,11 @@ def webhook(request):
         try:
             handler.handle(body, signature)
         except InvalidSignatureError:
-            abort(400)
+            # abort(400)
+            return HttpResponseForbidden('invalid signature')
 
         return 'OK'
+    return HttpResponseForbidden()
 
 
 @handler.add(MessageEvent, message=TextMessage)
