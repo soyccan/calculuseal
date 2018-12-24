@@ -12,7 +12,7 @@ from linebot.models import (
 )
 
 import logging
-logging.set
+logging.getLogger().setLevel('DEBUG')
 
 # app = Flask(__name__)
 

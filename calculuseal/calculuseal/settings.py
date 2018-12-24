@@ -129,7 +129,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/home/soyccan/calculuseal/django.log',
+            'filename': BASE_DIR + '/django.log',
         },
     },
     'loggers': {
