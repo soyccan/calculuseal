@@ -79,7 +79,7 @@ def handle_image_message(event):
         for chunk in message_content.iter_content():
             fd.write(chunk)
 
-    logging.debug(f'image: {b64encode(open(in_img_path, "rb").read())}')
+    logging.debug(f'image: {open(in_img_path, "rb").read()[:20]}')
 
 
     # reply image
