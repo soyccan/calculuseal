@@ -56,12 +56,16 @@ def solve(equation, img_dir):
     if not queryresult or queryresult.get('error') == None or queryresult.get('error') == True:
         return -1
     pods = queryresult.get('pods')
+    if not pods:
+        return -1
     for pod in pods:
         title = pod.get('title')
         subpods = pod.get('subpods')
+        if not subpods:
+            return -1
         for subpod in subpods:
             # TODO: file types other than JPEG
-            path = os.path.join(img_dir, Id, title+'.jpg')
+            path = os.path.join(img_dir, str(Id), title+'.jpg')
             logging.debug(f'writing to {path}')
             img = subpod.get('img').get('src')
             open(path, 'wb').write(requests.get(img).content)
