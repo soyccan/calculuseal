@@ -16,6 +16,7 @@ import os
 import os.path
 import logging
 from urllib.parse import urljoin
+import requests
 
 import calculuseal.settings
 from apis import mathpix, wolfram
@@ -66,17 +67,18 @@ def handle_image_message(event):
     logging.debug('handle_image_message')
     logging.debug(f'reply_token: {event.reply_token}')
 
-    img_path = os.path.join(calculuseal.settings.BASE_DIR, 'static', 'media')
+    img_dir = os.path.join(calculuseal.settings.BASE_DIR, 'static', 'media')
+    in_img_path = os.path.join(img_dir, "_in.jpg")
 
     # receive image
-    logging.debug(f'writting to {os.path.join(img_path, "_in.jpg")}')
-    open(os.path.join(img_path, '_in.jpg'), 'wb').write(
+    logging.debug(f'writting to {in_img_path}')
+    open(in_img_path, 'wb').write(
         requests.get(f'https://api.line.me/v2/bot/message/{event.message.id}/content').content)
 
     # reply image
-    equation = mathpix.translate(path)
-    Id = wolfram.solve(equation, img_path)
-    for entry in os.scandir(img_path):
+    equation = mathpix.translate(in_img_path)
+    Id = wolfram.solve(equation, img_dir)
+    for entry in os.scandir(img_dir):
         logging.debug('found: ' + entry.path)
         t = threading.Thread(target=reply_image, args=(event.reply_token, entry.path))
         t.start()
