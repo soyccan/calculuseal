@@ -80,7 +80,8 @@ def handle_image_message(event):
     if Id == -1:
         t = threading.Thread(target=reply_text, args=(event.reply_token, '我看不懂！'))
         t.start()
-    for entry in os.scandir(img_dir):
+        return
+    for entry in os.scandir(os.path.join(img_dir, str(Id))):
         logging.debug('found: ' + entry.path)
         t = threading.Thread(target=reply_image, args=(event.reply_token, entry.path))
         t.start()
@@ -101,4 +102,4 @@ def reply_image(reply_token, img_path):
 
     line_bot_api.reply_message(
         reply_token,
-        ImageSendMessage(originalContentUrl=imgurl))
+        ImageSendMessage(original_content_url=imgurl, preview_image_url=imgurl))

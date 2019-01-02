@@ -11,5 +11,6 @@ logging.basicConfig(level='DEBUG', format='[%(levelname)s] file=%(pathname)s; %(
 
 # a = mathpix.translate(settings.BASE_DIR + '/media/_in.jpg')
 # wolfram.solve(a, settings.BASE_DIR + '/media')
-views.reply_image('444', '/home/soyccan/calculuseal/calculuseal/static/media/55/a.jpg')
+# views.reply_image('444', '/home/soyccan/calculuseal/calculuseal/static/media/55/a.jpg')
+open(settings.BASE_DIR + '/static/media/testrw', 'w').write('wonderful')
 
