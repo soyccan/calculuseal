@@ -3,14 +3,15 @@ import json
 import urllib.parse
 import time
 import logging
-
-logging.basicConfig(level='DEBUG', format='[%(levelname)s] %(message)s')
+import os
+import os.path
+from random import randint
 
 def solve(equation, img_dir):
-    '''
-    equation: in wolframalpha format
-    img_dir: directory in which to place result images
-    @returns: True if success
+    '''solve equation and get answer in images
+    str equation: in wolframalpha format
+    str img_dir: directory in which to place result images
+    int @returns: random id of which directory is for images storage, or -1 upon failure
     '''
     logging.debug(f'equation: {equation}')
 
@@ -36,22 +37,32 @@ def solve(equation, img_dir):
     j = r.json()
     # logging.debug(json.dumps(j, indent=4, sort_keys=True))
 
+    Id = -1
+    while True:
+        Id = randint(1, 100000000)
+        try:
+            os.mkdir(f'{img_dir}/{Id}')
+        except FileExistsError:
+            pass
+        else:
+            break
+
     queryresult = j.get('queryresult')
     logging.debug(f'queryresult={queryresult}')
-    if not queryresult:
-        return False
-    if queryresult.get('error') == None or queryresult.get('error') == True:
-        return False
+    if not queryresult or queryresult.get('error') == None or queryresult.get('error') == True:
+        return -1
     pods = queryresult.get('pods')
     for pod in pods:
         title = pod.get('title')
         subpods = pod.get('subpods')
         for subpod in subpods:
+            # TODO: file types other than JPEG
+            path = os.path.join(img_dir, Id, title+'.jpg')
+            logging.debug(f'writing to {path}')
             img = subpod.get('img').get('src')
-            logging.debug(f'writing to {img_dir}/{title}.jpg')
-            open(f'{img_dir}/{title}.jpg', 'wb').write(requests.get(img).content)
+            open(path, 'wb').write(requests.get(img).content)
 
-    return True
+    return Id
 
 
 '''

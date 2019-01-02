@@ -1,9 +1,15 @@
 from django.test import TestCase
 
-from calculuseal import settings
+import logging
 
+from calculuseal import settings
 from apis import mathpix
 from apis import wolfram
+from webhook import views
 
-a = mathpix.translate(settings.BASE_DIR + '/tmp/a.jpg')
-wolfram.solve(a, settings.BASE_DIR + '/tmp')
+logging.basicConfig(level='DEBUG', format='[%(levelname)s] %(message)s')
+
+# a = mathpix.translate(settings.BASE_DIR + '/media/_in.jpg')
+# wolfram.solve(a, settings.BASE_DIR + '/media')
+views.reply_image('444', '/home/soyccan/calculuseal/calculuseal/static/media/55/a.jpg')
+

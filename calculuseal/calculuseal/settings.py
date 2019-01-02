@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+SERVER_NAME = 'calculuseal.herokuapp.com'
 
 # Application definition
 

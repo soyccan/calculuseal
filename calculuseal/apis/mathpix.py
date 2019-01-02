@@ -2,8 +2,13 @@ import sys
 import base64
 import requests
 import json
+import logging
 
 def translate(file_path):
+    """translate the image specified by file_path into equations of WolframAlpha format
+    str file_path: full path of image file
+    str @returns: equations of WolframAlpha format
+    """
     b64str = base64.b64encode(open(file_path, "rb").read()).decode()
     r = requests.post(
         "https://api.mathpix.com/v3/latex",
@@ -29,8 +34,9 @@ def translate(file_path):
             'User-Agent': 'Mathpix/4.4.2.2 CFNetwork/894 Darwin/17.4.0',
             'Host': 'api.mathpix.com',
             "Content-type": "application/json"})
-    j = json.loads(r.text)
-    print(json.dumps(j, indent=4, sort_keys=True))
+    j = r.json()
+    logging.debug('response:')
+    logging.debug(json.dumps(j, indent=4, sort_keys=True))
     return j.get('wolfram')
 
 '''
