@@ -54,6 +54,7 @@ def handle_text_message(event):
     logging.debug('handle_text_message')
     logging.debug(f'reply_token: {event.reply_token}')
     t = threading.Thread(target=reply_to_line, args=(event.reply_token, event.message.text))
+    t.start()
     t.join()
 
 @handler.add(MessageEvent, message=ImageMessage)
