@@ -7,7 +7,7 @@ from apis import mathpix
 from apis import wolfram
 from webhook import views
 
-logging.basicConfig(level='DEBUG', format='[%(levelname)s] %(message)s')
+logging.basicConfig(level='DEBUG', format='[%(levelname)s] file=%(pathname)s; %(message)s')
 
 # a = mathpix.translate(settings.BASE_DIR + '/media/_in.jpg')
 # wolfram.solve(a, settings.BASE_DIR + '/media')

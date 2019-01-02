@@ -4,6 +4,8 @@ import requests
 import json
 import logging
 
+import calculuseal.settings
+
 def translate(file_path):
     """translate the image specified by file_path into equations of WolframAlpha format
     str file_path: full path of image file

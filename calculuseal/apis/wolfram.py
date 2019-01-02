@@ -7,6 +7,8 @@ import os
 import os.path
 from random import randint
 
+import calculuseal.settings
+
 def solve(equation, img_dir):
     '''solve equation and get answer in images
     str equation: in wolframalpha format
@@ -14,6 +16,8 @@ def solve(equation, img_dir):
     int @returns: random id of which directory is for images storage, or -1 upon failure
     '''
     logging.debug(f'equation: {equation}')
+    if not equation:
+        return -1
 
     inp = urllib.parse.quote(equation)
     timestamp = str(int(time.time())) + '000'
