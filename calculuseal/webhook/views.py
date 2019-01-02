@@ -59,6 +59,7 @@ def handle_text_message(event):
     logging.debug(f'reply_token: {event.reply_token}')
     t = threading.Thread(target=reply_text, args=(event.reply_token, event.message.text))
     t.start()
+    t.join()
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
@@ -77,6 +78,9 @@ def handle_image_message(event):
     Id = wolfram.solve(equation, img_path)
     for entry in os.scandir(img_path):
         logging.debug('found: ' + entry.path)
+        t = threading.Thread(target=reply_image, args=(event.reply_token, entry.path))
+        t.start()
+        t.join()
 
 def reply_text(reply_token, text):
     logging.debug(f'reply_message: token={reply_token} text={text}')
