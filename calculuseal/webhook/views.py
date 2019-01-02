@@ -8,7 +8,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage
 )
 
 import threading
@@ -31,7 +31,7 @@ def webhook(request):
         signature = request.META['HTTP_X_LINE_SIGNATURE']
 
         # get request body as text
-        body = request.body.decode()
+        body = request.body.decode('utf-8', 'ignore') # TODO: handle UnicodeError
         logging.info("Request body: " + body)
 
         logging.debug(f'signature: {signature}')
@@ -50,12 +50,29 @@ def webhook(request):
 
 
 @handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
-    logging.debug('handle_message')
+def handle_text_message(event):
+    logging.debug('handle_text_message')
     logging.debug(f'reply_token: {event.reply_token}')
-    threading.Thread(target=reply_to_line, args=(event.reply_token, event.message.text))
+    t = threading.Thread(target=reply_to_line, args=(event.reply_token, event.message.text))
+    t.join()
+
+@handler.add(MessageEvent, message=ImageMessage)
+def handle_image_message(event):
+    logging.debug('handle_image_message')
+    logging.debug(f'reply_token: {event.reply_token}')
+
+    # receive image
+    imgdata = requests.get(f'https://api.line.me/v2/bot/message/{event.message.id}/content').content
+    logging.debug(f'writting to /tmp/_in.jpg')
+    open(calculuseal.settings.BASE_DIR + '/tmp/_in.jpg', 'wb').write(imgdata)
+
+    # reply image
+    # TODO
+
+    # threading.Thread(target=reply_to_line, args=(event.reply_token, event.message.???))
 
 def reply_to_line(reply_token, text):
+    logging.debug(f'reply_message: token={reply_token} text={text}')
     line_bot_api.reply_message(
         reply_token,
         TextSendMessage(text=text))
