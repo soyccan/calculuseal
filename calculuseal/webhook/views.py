@@ -68,7 +68,7 @@ def handle_image_message(event):
     img_path = os.path.join(calculuseal.settings.BASE_DIR, 'static', 'media')
 
     # receive image
-    logging.debug(f'writting to {path}')
+    logging.debug(f'writting to {os.path.join(img_path, '_in.jpg')}')
     open(os.path.join(img_path, '_in.jpg'), 'wb').write(
         requests.get(f'https://api.line.me/v2/bot/message/{event.message.id}/content').content)
 
