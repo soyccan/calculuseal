@@ -11,11 +11,12 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage
 )
 
+from urllib.parse import urljoin
+from base64 import b64encode
 import threading
 import os
 import os.path
 import logging
-from urllib.parse import urljoin
 import requests
 
 import calculuseal.settings
@@ -69,10 +70,17 @@ def handle_image_message(event):
     img_dir = os.path.join(calculuseal.settings.BASE_DIR, 'static', 'media')
     in_img_path = os.path.join(img_dir, "_in.jpg")
 
+
     # receive image
-    logging.debug(f'writting to {in_img_path}')
-    open(in_img_path, 'wb').write(
-        requests.get(f'https://api.line.me/v2/bot/message/{event.message.id}/content').content)
+    logging.debug(f'writing to {in_img_path}')
+
+    message_content = line_bot_api.get_message_content(event.message.id)
+    with open(in_img_path, 'wb') as fd:
+        for chunk in message_content.iter_content():
+            fd.write(chunk)
+
+    logging.debug(f'image: {b64encode(open(in_img_path, "rb").read())}')
+
 
     # reply image
     equation = mathpix.translate(in_img_path)
