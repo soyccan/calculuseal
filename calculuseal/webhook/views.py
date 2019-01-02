@@ -11,7 +11,7 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage
 )
 
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 from base64 import b64encode
 import threading
 import os
@@ -104,7 +104,7 @@ def reply_image(reply_token, img_path):
     logging.debug(f'reply_message: token={reply_token} image={img_path}')
 
     subpath = img_path[len(calculuseal.settings.BASE_DIR) : ]
-    imgurl = urljoin('https://'+calculuseal.settings.SERVER_NAME, subpath)
+    imgurl = quote(urljoin('https://'+calculuseal.settings.SERVER_NAME, subpath))
     logging.debug(f'servername={calculuseal.settings.SERVER_NAME}, subpath={subpath}')
     logging.debug(f'imgurl={imgurl}')
 
