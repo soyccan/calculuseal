@@ -120,7 +120,7 @@ def reply_text(reply_token, text):
 def reply_image(reply_token, timestamp):
     logging.debug(f'reply_message: token={reply_token} timestamp={timestamp}')
 
-    imgurl = 'https://' + quote(calculuseal.settings.SERVER_NAME + f'/media/{timestamp}')
+    imgurl = 'https://' + quote(calculuseal.settings.SERVER_NAME + f'/media/{timestamp}/')
     logging.debug(f'imgurl={imgurl}')
 
 def reply_image_img_path(reply_token, img_path):
