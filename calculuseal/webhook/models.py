@@ -9,6 +9,7 @@ class Media(models.Model):
         # ('a', 'audio'),
         # ('v', 'video'),
     )
+    # TODO: define media_type with mimetypes
     media_type = models.CharField(max_length=1, choices=MEDIA_TYPES)
     timestamp = models.BigIntegerField(primary_key=True, default=0)
     image = models.BinaryField(blank=True, max_length=1048576)

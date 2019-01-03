@@ -28,7 +28,6 @@ from apis import mathpix, wolfram
 
 # app = Flask(__name__)
 
-logging.getLogger().setLevel('DEBUG')
 line_bot_api = LineBotApi('ncgm9HizxV7Z1qyLCQtYTlLfH77C497/1LflP9CroAgEavL6BxyQK6JFY2Joa02EnXx8MUtGjrpGN8ueV2dEbSrsi/nyHgE5aQVw79jnKI8yqQtHvkvBKGYnOWCb6bosC4qhWmfdnANYspooKzmsnQdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('90710d30a6a5618caea6ef52bc0fed7e')
 
@@ -39,7 +38,7 @@ def media(request, timestamp):
     if obj.media_type == 'i':
         # image
         # TODO: other image type (png, gif...)
-        return HttpResponse(bytes(obj.image), content_type='image/jpeg')
+        return HttpResponse(bytes(obj.image), content_type='image/gif')
     else:
         return HttpResponseBadRequest()
 
@@ -84,10 +83,6 @@ def handle_image_message(event):
     logging.debug('handle_image_message')
     logging.debug(f'reply_token: {event.reply_token}')
 
-    # img_dir = os.path.join(calculuseal.settings.BASE_DIR, 'static', 'media')
-    # in_img_path = os.path.join(img_dir, "_in.jpg")
-
-
     # receive image
     # TODO: optimize with iter_content()
     problem = line_bot_api.get_message_content(event.message.id).content
@@ -96,11 +91,10 @@ def handle_image_message(event):
     # logging.debug(f'writing to {in_img_path}')
 
     # reply image
-    # equation = mathpix.translate(in_img_path)
     equation = mathpix.translate(problem)
     answers = wolfram.solve(equation)
     if not answers:
-        t = threading.Thread(target=reply_text, args=(event.reply_token, '我看不懂！'))
+        t = threading.Thread(target=reply_text, args=(event.reply_token, '我不會！！！'))
         t.start()
         return
     for ans in answers:
@@ -124,18 +118,6 @@ def reply_image(reply_token, timestamp):
     logging.debug(f'imgurl={imgurl}')
 
     # TODO: preview image
-    line_bot_api.reply_message(
-        reply_token,
-        ImageSendMessage(original_content_url=imgurl, preview_image_url=imgurl))
-
-def reply_image_img_path(reply_token, img_path):
-    logging.debug(f'reply_message: token={reply_token} image={img_path}')
-
-    subpath = img_path[len(calculuseal.settings.BASE_DIR) : ]
-    imgurl = 'https://' + quote(calculuseal.settings.SERVER_NAME + subpath)
-    logging.debug(f'servername={calculuseal.settings.SERVER_NAME}, subpath={subpath}')
-    logging.debug(f'imgurl={imgurl}')
-
     line_bot_api.reply_message(
         reply_token,
         ImageSendMessage(original_content_url=imgurl, preview_image_url=imgurl))

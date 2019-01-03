@@ -41,41 +41,6 @@ def translate(content):
     logging.debug(json.dumps(j, indent=4, sort_keys=True))
     return j.get('wolfram')
 
-def translate_file_path(file_path):
-    """translate the image specified by file_path into equations of WolframAlpha format
-    str file_path: full path of image file
-    str @returns: equations of WolframAlpha format
-    """
-    b64str = base64.b64encode(open(file_path, "rb").read()).decode()
-    r = requests.post(
-        "https://api.mathpix.com/v3/latex",
-        data=json.dumps({
-            "metadata": {
-                "count": 17,
-                "mode": "solver",
-                "user_id":"16E45C4A-46F7-4F94-A95F-EDBF8F463941"
-            },
-            "url": "data:image/jpeg;base64," + b64str,
-            "formats": {
-                "latex_confidence_rate_threshold":0.5,
-                "latex_confidence_threshold":0,
-                "wolfram":"true"
-            }}),
-            # 'src': image_uri,
-            # 'formats': ['latex_normal', 'latex_styled']}),
-        headers={
-            # "app_id": "trial",
-            # "app_key": "34f1a4cea0eaca8540c95908b4dc84ab",
-            "app_id": "mathpix_ios",
-            "app_key": "025c3298dae222b4e6b4cc7758814e5e",
-            'User-Agent': 'Mathpix/4.4.2.2 CFNetwork/894 Darwin/17.4.0',
-            'Host': 'api.mathpix.com',
-            "Content-type": "application/json"})
-    j = r.json()
-    logging.debug('response:')
-    logging.debug(json.dumps(j, indent=4, sort_keys=True))
-    return j.get('wolfram')
-
 '''
 curl -i -s -k  -X $'POST' \
     -H $'Host: api.mathpix.com' \
