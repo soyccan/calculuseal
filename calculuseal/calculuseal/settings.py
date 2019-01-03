@@ -87,24 +87,24 @@ DATABASES = {
     # }
 
     # heroku's remote DB
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'd39abpadunahq1',
-    #     'USER': 'nsapksktmaxkwr',
-    #     'PASSWORD': '7cea9969461d6a1fcf3802ec089ca74bcd1fda7e9084ad7d103f029699b74f6f',
-    #     'HOST': 'ec2-54-243-212-227.compute-1.amazonaws.com',
-    #     'PORT': '5432',
-    # }
-
-    # local DB for testing
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'test',
-        'USER': 'soyccan',
-        'PASSWORD': 'soyccan',
-        'HOST': 'localhost',
+        'NAME': 'd39abpadunahq1',
+        'USER': 'nsapksktmaxkwr',
+        'PASSWORD': '7cea9969461d6a1fcf3802ec089ca74bcd1fda7e9084ad7d103f029699b74f6f',
+        'HOST': 'ec2-54-243-212-227.compute-1.amazonaws.com',
         'PORT': '5432',
     }
+
+    # local DB for testing
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'test',
+    #     'USER': 'soyccan',
+    #     'PASSWORD': 'soyccan',
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    # }
 }
 
 
