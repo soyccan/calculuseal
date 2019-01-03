@@ -20,6 +20,8 @@ import webhook.views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
+    path('webhook', webhook.views.webhook),
     path('webhook/', webhook.views.webhook),
+    path('media/<int:timestamp>', webhook.views.media),
     path('media/<int:timestamp>/', webhook.views.media),
 ]
