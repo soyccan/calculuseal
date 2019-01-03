@@ -4,10 +4,14 @@ import os
 import os.path
 import logging
 import pprint
+import time
 
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseForbidden
-
+from django.http import (
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseBadRequest,
+)
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -19,6 +23,7 @@ from linebot.models import (
 )
 
 import calculuseal.settings
+from webhook import models
 from apis import mathpix, wolfram
 
 # app = Flask(__name__)
@@ -27,6 +32,16 @@ logging.getLogger().setLevel('DEBUG')
 line_bot_api = LineBotApi('ncgm9HizxV7Z1qyLCQtYTlLfH77C497/1LflP9CroAgEavL6BxyQK6JFY2Joa02EnXx8MUtGjrpGN8ueV2dEbSrsi/nyHgE5aQVw79jnKI8yqQtHvkvBKGYnOWCb6bosC4qhWmfdnANYspooKzmsnQdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('90710d30a6a5618caea6ef52bc0fed7e')
 
+
+def media(request, timestamp):
+    obj = models.Media.objects.filter(timestamp=timestamp)[0]
+    # TODO: audio and video
+    if obj.media_type == 'i':
+        # image
+        # TODO: other image type (png, gif...)
+        return HttpResponse(bytes(obj.image), content_type='image/jpeg')
+    else:
+        return HttpResponseBadRequest()
 
 # @app.route("/callback", methods=['POST'])
 # def callback():
@@ -69,31 +84,31 @@ def handle_image_message(event):
     logging.debug('handle_image_message')
     logging.debug(f'reply_token: {event.reply_token}')
 
-    img_dir = os.path.join(calculuseal.settings.BASE_DIR, 'static', 'media')
-    in_img_path = os.path.join(img_dir, "_in.jpg")
+    # img_dir = os.path.join(calculuseal.settings.BASE_DIR, 'static', 'media')
+    # in_img_path = os.path.join(img_dir, "_in.jpg")
 
 
     # receive image
-    logging.debug(f'writing to {in_img_path}')
+    # TODO: optimize with iter_content()
+    problem = line_bot_api.get_message_content(event.message.id).content
+    logging.debug(f'problem: {problem[:20]}')
 
-    message_content = line_bot_api.get_message_content(event.message.id)
-    with open(in_img_path, 'wb') as fd:
-        for chunk in message_content.iter_content():
-            fd.write(chunk)
-
-    logging.debug(f'image: {open(in_img_path, "rb").read()[:20]}')
-
+    # logging.debug(f'writing to {in_img_path}')
 
     # reply image
-    equation = mathpix.translate(in_img_path)
-    Id = wolfram.solve(equation, img_dir)
-    if Id == -1:
+    # equation = mathpix.translate(in_img_path)
+    equation = mathpix.translate(problem)
+    answers = wolfram.solve(equation)
+    if not answers:
         t = threading.Thread(target=reply_text, args=(event.reply_token, '我看不懂！'))
         t.start()
         return
-    for entry in os.scandir(os.path.join(img_dir, str(Id))):
-        logging.debug('found: ' + entry.path)
-        t = threading.Thread(target=reply_image, args=(event.reply_token, entry.path))
+    for ans in answers:
+        timestamp = int(time.time())
+        models.Media(timestamp=timestamp, image=ans, media_type='i').save()
+
+        logging.debug(f'ans: {ans[:20]}, timestamp={timestamp}')
+        t = threading.Thread(target=reply_image, args=(event.reply_token, timestamp))
         t.start()
 
 def reply_text(reply_token, text):
@@ -102,7 +117,13 @@ def reply_text(reply_token, text):
         reply_token,
         TextSendMessage(text=text))
 
-def reply_image(reply_token, img_path):
+def reply_image(reply_token, timestamp):
+    logging.debug(f'reply_message: token={reply_token} timestamp={timestamp}')
+
+    imgurl = 'https://' + quote(calculuseal.settings.SERVER_NAME + f'/media/{timestamp}')
+    logging.debug(f'imgurl={imgurl}')
+
+def reply_image_img_path(reply_token, img_path):
     logging.debug(f'reply_message: token={reply_token} image={img_path}')
 
     subpath = img_path[len(calculuseal.settings.BASE_DIR) : ]

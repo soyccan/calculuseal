@@ -9,7 +9,60 @@ from random import randint
 
 import calculuseal.settings
 
-def solve(equation, img_dir):
+def solve(equation):
+    '''solve equation and get answer in images
+    str equation: in wolframalpha format
+    list @returns: list of images in bytes, [] upon failure
+    '''
+    logging.debug(f'equation: {equation}')
+    if not equation:
+        return []
+
+    inp = urllib.parse.quote(equation)
+    timestamp = str(int(time.time())) + '000'
+    r = requests.get(f'https://www.wolframalpha.com/input/api/v1/code?ts={timestamp}')
+    proxycode = r.json().get('code')
+
+    logging.debug(f'timestamp={timestamp}')
+    logging.debug(f'inp={inp}')
+    logging.debug(f'proxycode={proxycode}')
+    logging.debug('response: ' + r.text)
+
+    r = requests.get(
+        f'https://www.wolframalpha.com/input/json.jsp?assumptionsversion=2&async=true&banners=raw&debuggingdata=false&format=image,plaintext,imagemap,sound,minput,moutput&formattimeout=8'
+        f'&input={inp}&output=JSON&parsetimeout=5&podinfosasync=true&proxycode={proxycode}&recalcscheme=parallel&sbsdetails=true&scantimeout=0.5&sponsorcategories=true&statemethod=deploybutton&storesubpodexprs=true',
+        headers={
+            'Host': 'www.wolframalpha.com',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0',
+            'Referer': f'https://www.wolframalpha.com/input/?i={inp}'})
+
+    logging.debug('response: ' + r.text)
+    j = r.json()
+    # logging.debug(json.dumps(j, indent=4, sort_keys=True))
+
+    result = []
+    queryresult = j.get('queryresult')
+    logging.debug(f'queryresult={queryresult}')
+    if not queryresult or queryresult.get('error') == None or queryresult.get('error') == True:
+        return []
+    pods = queryresult.get('pods')
+    if not pods:
+        return []
+    for pod in pods:
+        title = pod.get('title')
+        subpods = pod.get('subpods')
+        if not subpods:
+            return []
+        for subpod in subpods:
+            # TODO: file types other than JPEG
+            imgsrc = subpod.get('img').get('src')
+            imgdata = requests.get(imgsrc).content
+            result.append(imgdata)
+            logging.debug(f'imgdata: {imgdata[:20]}')
+
+    return result
+
+def solve_img_dir(equation, img_dir):
     '''solve equation and get answer in images
     str equation: in wolframalpha format
     str img_dir: directory in which to place result images
