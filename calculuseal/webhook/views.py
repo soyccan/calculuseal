@@ -1,3 +1,10 @@
+from urllib.parse import quote
+import threading
+import os
+import os.path
+import logging
+import pprint
+
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseForbidden
 
@@ -10,14 +17,6 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage
 )
-
-from urllib.parse import urljoin, quote
-from base64 import b64encode
-import threading
-import os
-import os.path
-import logging
-import requests
 
 import calculuseal.settings
 from apis import mathpix, wolfram
@@ -32,6 +31,9 @@ handler = WebhookHandler('90710d30a6a5618caea6ef52bc0fed7e')
 # @app.route("/callback", methods=['POST'])
 # def callback():
 def webhook(request):
+    logging.debug('request:')
+    logging.debug(vars(request))
+
     if calculuseal.settings.DEBUG == True or request.method == 'POST':
         # get X-Line-Signature header value
         signature = request.META['HTTP_X_LINE_SIGNATURE']
@@ -104,7 +106,7 @@ def reply_image(reply_token, img_path):
     logging.debug(f'reply_message: token={reply_token} image={img_path}')
 
     subpath = img_path[len(calculuseal.settings.BASE_DIR) : ]
-    imgurl = 'https://' + quote(urljoin(calculuseal.settings.SERVER_NAME, subpath))
+    imgurl = 'https://' + quote(calculuseal.settings.SERVER_NAME + subpath)
     logging.debug(f'servername={calculuseal.settings.SERVER_NAME}, subpath={subpath}')
     logging.debug(f'imgurl={imgurl}')
 

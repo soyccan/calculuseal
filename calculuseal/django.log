@@ -1261,3 +1261,63 @@ CREATE INDEX "django_session_expire_date_a5c62663" ON "django_session" ("expire_
             WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
             ORDER BY name; args=None
 (0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+(0.002) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+(0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+Not Found: /
+"GET / HTTP/1.1" 404 1927
+Internal Server Error: /webhook
+Traceback (most recent call last):
+  File "/home/soyccan/calculuseal/lib/python3.6/site-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/home/soyccan/calculuseal/lib/python3.6/site-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/home/soyccan/calculuseal/lib/python3.6/site-packages/django/core/handlers/base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/soyccan/calculuseal/calculuseal/webhook/views.py", line 38, in webhook
+    signature = request.META['HTTP_X_LINE_SIGNATURE']
+KeyError: 'HTTP_X_LINE_SIGNATURE'
+"GET /webhook HTTP/1.1" 500 64506
+(0.001) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+Not Found: /webhook/
+"GET /webhook/ HTTP/1.1" 404 1969
+Internal Server Error: /webhook
+Traceback (most recent call last):
+  File "/home/soyccan/calculuseal/lib/python3.6/site-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/home/soyccan/calculuseal/lib/python3.6/site-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/home/soyccan/calculuseal/lib/python3.6/site-packages/django/core/handlers/base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/soyccan/calculuseal/calculuseal/webhook/views.py", line 35, in webhook
+    logging.debug(pprint(vars(request)))
+TypeError: 'module' object is not callable
+"GET /webhook HTTP/1.1" 500 64583
+(0.001) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None
+(0.000) SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"; args=()
+Internal Server Error: /webhook
+Traceback (most recent call last):
+  File "/home/soyccan/calculuseal/lib/python3.6/site-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/home/soyccan/calculuseal/lib/python3.6/site-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/home/soyccan/calculuseal/lib/python3.6/site-packages/django/core/handlers/base.py", line 124, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/soyccan/calculuseal/calculuseal/webhook/views.py", line 39, in webhook
+    signature = request.META['HTTP_X_LINE_SIGNATURE']
+KeyError: 'HTTP_X_LINE_SIGNATURE'
+"GET /webhook HTTP/1.1" 500 64636
