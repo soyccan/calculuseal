@@ -123,6 +123,11 @@ def reply_image(reply_token, timestamp):
     imgurl = 'https://' + quote(calculuseal.settings.SERVER_NAME + f'/media/{timestamp}/')
     logging.debug(f'imgurl={imgurl}')
 
+    # TODO: preview image
+    line_bot_api.reply_message(
+        reply_token,
+        ImageSendMessage(original_content_url=imgurl, preview_image_url=imgurl))
+
 def reply_image_img_path(reply_token, img_path):
     logging.debug(f'reply_message: token={reply_token} image={img_path}')
 
