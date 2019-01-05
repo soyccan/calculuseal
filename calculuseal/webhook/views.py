@@ -97,13 +97,15 @@ def handle_image_message(event):
         t = threading.Thread(target=reply_text, args=(event.reply_token, '我不會！！！'))
         t.start()
         return
+    timestamps = []
     for ans in answers:
         timestamp = int(time.time())
         models.Media(timestamp=timestamp, image=ans, media_type='i').save()
-
         logging.debug(f'ans: {ans[:20]}, timestamp={timestamp}')
-        t = threading.Thread(target=reply_image, args=(event.reply_token, timestamp))
-        t.start()
+        timestamps.append(timestamp)
+
+    t = threading.Thread(target=reply_image, args=(event.reply_token, timestamps))
+    t.start()
 
 def reply_text(reply_token, text):
     logging.debug(f'reply_message: token={reply_token} text={text}')
@@ -111,13 +113,17 @@ def reply_text(reply_token, text):
         reply_token,
         TextSendMessage(text=text))
 
-def reply_image(reply_token, timestamp):
-    logging.debug(f'reply_message: token={reply_token} timestamp={timestamp}')
+def reply_image(reply_token, timestamps):
+    logging.debug(f'reply_message: token={reply_token} timestamp={timestamps}')
 
-    imgurl = 'https://' + quote(calculuseal.settings.SERVER_NAME + f'/media/{timestamp}/')
-    logging.debug(f'imgurl={imgurl}')
+    msgs = []
+    for timestamp in timestamps:
+        imgurl = 'https://' + quote(calculuseal.settings.SERVER_NAME + f'/media/{timestamp}/')
+        logging.debug(f'imgurl={imgurl}')
+        # TODO: preview image
+        msgs.append(ImageSendMessage(original_content_url=imgurl, preview_image_url=imgurl))
+        if len(msgs) >= 5:
+            # reaching LINE's reply limit
+            break
 
-    # TODO: preview image
-    line_bot_api.reply_message(
-        reply_token,
-        ImageSendMessage(original_content_url=imgurl, preview_image_url=imgurl))
+    line_bot_api.reply_message(reply_token, msgs)
