@@ -1,6 +1,6 @@
 db.sqlite3
-lib
-bin
-__pycache__
-*.pyc
-tmp
+lib/
+bin/
+include/
+**/__pycache__/
+**/*.pyc
