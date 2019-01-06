@@ -5,3 +5,4 @@ bin/
 include/
 **/__pycache__/
 **/*.pyc
+config/line.py

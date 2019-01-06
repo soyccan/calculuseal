@@ -12,7 +12,10 @@ import calculuseal.settings
 def solve(equation):
     '''solve equation and get answer in images
     str equation: in wolframalpha format
-    list @returns: list of images in bytes, [] upon failure
+    list @returns: list of pair (imgdata, content_type)
+                   where imgdata is images in bytes
+                   content_type is the mimetype given by 'Content-Type' HTTP header
+                   returns [] upon failure
     '''
     logging.debug(f'equation: {equation}')
     if not equation:
@@ -36,7 +39,7 @@ def solve(equation):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0',
             'Referer': f'https://www.wolframalpha.com/input/?i={inp}'})
 
-    logging.debug('response: ' + r.text)
+    # logging.debug('response: ' + r.text)
     j = r.json()
 
     result = []
@@ -53,11 +56,12 @@ def solve(equation):
         if not subpods:
             return []
         for subpod in subpods:
-            # TODO: file types other than JPEG
             imgsrc = subpod.get('img').get('src')
-            imgdata = requests.get(imgsrc).content
-            result.append(imgdata)
-            logging.debug(f'imgdata: {imgdata[:20]}')
+            r = requests.get(imgsrc)
+            imgdata = r.content
+            content_type = r.headers.get('content-type')
+            result.append((imgdata, content_type))
+            logging.debug(f'imgdata: {imgdata[-20:]}, title={title}, content_type={content_type}')
 
     return result
 

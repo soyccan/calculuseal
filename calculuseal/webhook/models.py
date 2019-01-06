@@ -2,15 +2,12 @@ from django.db import models
 
 class Media(models.Model):
     """store images, audio, video
-    currently implemented for images only
+    content_type: mimetype
+    timestamp: integer, Unix epoch time * 1000, for precision to milliseconds
+    data: binary data
+    preview_data: binary data for preview
     """
-    MEDIA_TYPES = (
-        ('i', 'image'),
-        # ('a', 'audio'),
-        # ('v', 'video'),
-    )
-    # TODO: define media_type with mimetypes
-    media_type = models.CharField(max_length=1, choices=MEDIA_TYPES)
+    content_type = models.CharField(max_length=100)
     timestamp = models.BigIntegerField(primary_key=True, default=0)
-    image = models.BinaryField(blank=True, max_length=1048576)
-    image_preview = models.BinaryField(blank=True, max_length=1048576)
+    data = models.BinaryField(blank=True, max_length=1048576) # 1M
+    preview_data = models.BinaryField(blank=True, max_length=1048576)
