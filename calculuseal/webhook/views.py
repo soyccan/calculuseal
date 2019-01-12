@@ -29,7 +29,6 @@ import config.line
 from webhook import models
 from apis import mathpix, wolfram
 
-# app = Flask(__name__)
 
 line_bot_api = LineBotApi(config.line.CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(config.line.CHANNEL_SECRET)
@@ -43,8 +42,6 @@ def media(request, timestamp):
     else:
         return HttpResponseBadRequest()
 
-# @app.route("/callback", methods=['POST'])
-# def callback():
 def webhook(request):
     logging.debug('request:')
     logging.debug(vars(request))
@@ -54,17 +51,17 @@ def webhook(request):
         signature = request.META['HTTP_X_LINE_SIGNATURE']
 
         # get request body as text
-        body = request.body.decode('utf-8', 'ignore') # TODO: handle UnicodeError
+        body = request.body.decode('utf-8')
         logging.info("Request body: " + body)
 
-        logging.debug(f'signature: {signature}')
-
-        # handle webhook body
-        try:
-            handler.handle(body, signature)
-        except InvalidSignatureError:
-            # abort(400)
+        # handle invalid signature manually, as it cannot be handled inside the thread
+        if not handler.parser.signature_validator.validate(body, signature):
+            logging.error('Invalid signature. signature=' + signature)
             return HttpResponseForbidden('invalid signature')
+
+        # handle webhook events
+        t = threading.Thread(target=handler.handle, args=(body, signature))
+        t.start()
 
         # reply 200 OK within one second (otherwise LINE will see it as bad request)
         return HttpResponse()
@@ -78,9 +75,9 @@ def handle_text_message(event):
     logging.debug(f'reply_token: {event.reply_token}')
 
     words = event.message.text
-    calc_suc = False # if calculation succeded
+    calc_suc = False # if calculation succeeded
 
-    if re.match(r'[0-9+\-*/^().<>=]*', words):
+    if re.match(r'[0-9+\-*/^().<>=]{1,30}', words.replace(' ', '')):
         try:
             result = eval(words)
             calc_suc = True
@@ -91,9 +88,6 @@ def handle_text_message(event):
         reply_message(event.reply_token, ['當恁爸計算機哦', words + ' = ' + str(result)])
     else:
         reply_message(event.reply_token, ['我聽不懂所以只能重複你說的話', words])
-
-    # t = threading.Thread(target=reply_text, args=(event.reply_token, event.message.text))
-    # t.start()
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
@@ -110,8 +104,6 @@ def handle_image_message(event):
     answers = wolfram.solve(equation)
     if not answers:
         push_message(event.source.user_id, ['我不會！！！'])
-        # t = threading.Thread(target=push_text, args=(event.source.user_id, '我不會！！！'))
-        # t.start()
         return
     timestamps = []
     for ans, content_type in answers:
@@ -121,17 +113,28 @@ def handle_image_message(event):
         timestamps.append(timestamp)
 
     push_image(event.source.user_id, timestamps)
-    # t = threading.Thread(target=push_image, args=(event.source.user_id, timestamps))
-    # t.start()
 
 @handler.add(FollowEvent)
 def handle_follow(event):
     # TODO: email the developer
+    profile = line_bot_api.get_profile(event.source.user_id, timeout=10)
+    profile_str = [
+        f'user_id = {profile.user_id}',
+        f'display_name = {profile.display_name}',
+        f'status_message = {profile.status_message}',
+        f'picture_url = {profile.picture_url}']
+    push_message(config.line.DEVELOPER_ID, ['some friendly fellow followed me ^_^'] + profile_str)
+
     logging.debug(f'{event.source.user_id} followed me ^_^')
-    profile = json.loads(line_bot_api.get_profile(event.source.user_id, timeout=10).__str__())
     logging.debug(f'his/her profile:')
-    logging.debug(profile)
-    push_message(config.line.DEVELOPER_ID, ['some friendly fellow followed me ^_^', profile.__str__()])
+    logging.debug('\n'.join(profile_str))
+
+    # add to database
+    models.Friends(
+        user_id = profile.user_id,
+        display_name = profile.display_name,
+        picture_url = profile.picture_url,
+        status_message = profile.status_message).save()
 
 def reply_message(reply_token, messages):
     logging.debug(f'reply_message: token={reply_token} text={messages}')
@@ -142,13 +145,10 @@ def reply_message(reply_token, messages):
 
 def push_message(user, messages):
     logging.debug(f'push_message: user={user} text={messages}')
-    msgs = []
-    for text in messages:
-        msgs.append(TextSendMessage(text=text))
-        if len(msgs) >= 5:
-            line_bot_api.push_message(user, msgs)
-            msgs = []
-    line_bot_api.push_message(user, msgs)
+    msgs = [TextSendMessage(text=text) for text in messages]
+    while msgs:
+        line_bot_api.push_message(user, msgs[:5])
+        msgs = msgs[5:]
 
 def push_image(user, timestamps):
     logging.debug(f'push_image: user={user} timestamp={timestamps}')

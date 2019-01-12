@@ -38,7 +38,7 @@ if DEBUG:
 ALLOWED_HOSTS = ['*']
 
 if LOCAL:
-    SERVER_NAME = '8dbf662d.ngrok.io'
+    SERVER_NAME = '4f742b98.ngrok.io'
 else:
     SERVER_NAME = 'calculuseal.herokuapp.com'
 
