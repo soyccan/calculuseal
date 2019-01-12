@@ -27,7 +27,7 @@ from linebot.models import (
 import calculuseal.settings
 import config.line
 from webhook import models
-from apis import mathpix, wolfram
+from apis import mathpix, wolfram, yahoodict
 
 
 line_bot_api = LineBotApi(config.line.CHANNEL_ACCESS_TOKEN)
@@ -76,6 +76,7 @@ def handle_text_message(event):
 
     words = event.message.text
     calc_suc = False # if calculation succeeded
+    dict_suc = False
 
     if re.match(r'[0-9+\-*/^().<>=]{1,30}', words.replace(' ', '')):
         try:
@@ -83,9 +84,17 @@ def handle_text_message(event):
             calc_suc = True
         except:
             calc_suc = False
+    elif re.match(r'[a-zA-Z]+', words.replace(' ', '')):
+        try:
+            result = yahoodict.lookup(words.replace(' ', ''))
+            dict_suc = True
+        except:
+            dict_suc = False
 
     if calc_suc:
         reply_message(event.reply_token, ['當恁爸計算機哦', words + ' = ' + str(result)])
+    elif dict_suc:
+        reply_message(event.reply_token, ['當恁爸海豹體字典哦', words + '：' + str(result)])
     else:
         reply_message(event.reply_token, ['我聽不懂所以只能重複你說的話', words])
 

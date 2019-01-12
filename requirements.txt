@@ -1,4 +1,6 @@
 astroid==2.1.0
+beautifulsoup4==4.7.1
+bs4==0.0.1
 certifi==2018.11.29
 chardet==3.0.4
 dj-database-url==0.5.0
@@ -16,6 +18,7 @@ pylint==2.2.2
 pytz==2018.7
 requests==2.21.0
 six==1.12.0
+soupsieve==1.7
 static3==0.7.0
 termcolor==1.1.0
 typed-ast==1.1.1
