@@ -13,6 +13,9 @@ class Media(models.Model):
     data = models.BinaryField(max_length=1048576) # 1M
     preview_data = models.BinaryField(max_length=1048576)
 
+    def __str__(self):
+        return str(self.timestamp)
+
 class Friends(models.Model):
     user_id = models.CharField(
         primary_key=True,
@@ -22,3 +25,6 @@ class Friends(models.Model):
     display_name = models.CharField(null=True, blank=True, max_length=100)
     status_message = models.CharField(null=True, blank=True, max_length=500)
     picture_url = models.URLField(null=True, blank=True, max_length=200)
+
+    def __str__(self):
+        return self.display_name
