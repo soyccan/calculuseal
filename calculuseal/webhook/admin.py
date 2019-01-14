@@ -11,4 +11,4 @@ class MediaAdmin(admin.ModelAdmin):
 
 @admin.register(models.Friends)
 class FriendsAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('user_id', 'display_name', 'status_message', 'picture_url')
