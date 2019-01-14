@@ -32,8 +32,7 @@ DEBUG = False
 LOCAL = os.environ.get('LOCALAAAA')
 
 # logging debug message, blue
-if DEBUG:
-    logging.basicConfig(level='DEBUG', format='\x1b[34m[%(levelname)s]\x1b[0m \x1b[32mfile=%(pathname)s;\x1b[0m %(message)s')
+logging.basicConfig(level='DEBUG', format='\x1b[34m[%(levelname)s]\x1b[0m \x1b[32mfile=%(pathname)s;\x1b[0m %(message)s')
 
 ALLOWED_HOSTS = ['*']
 
