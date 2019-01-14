@@ -6,6 +6,7 @@ import logging
 import os
 import os.path
 from random import randint
+import pprint
 
 import calculuseal.settings
 
@@ -39,12 +40,12 @@ def solve(equation):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0',
             'Referer': f'https://www.wolframalpha.com/input/?i={inp}'})
 
-    # logging.debug('response: ' + r.text)
     j = r.json()
 
     result = []
     queryresult = j.get('queryresult')
-    logging.debug(f'queryresult={queryresult}')
+    logging.debug('queryresult:')
+    logging.debug(pprint.pprint(queryresult))
     if not queryresult or queryresult.get('error') == None or queryresult.get('error') == True:
         return []
     pods = queryresult.get('pods')
@@ -54,7 +55,7 @@ def solve(equation):
         title = pod.get('title')
         subpods = pod.get('subpods')
         if not subpods:
-            return []
+            continue
         for subpod in subpods:
             imgsrc = subpod.get('img').get('src')
             r = requests.get(imgsrc)
