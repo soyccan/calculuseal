@@ -28,3 +28,11 @@ class Friends(models.Model):
 
     def __str__(self):
         return self.display_name
+
+class Message(models.Model):
+    timestamp = models.DateTimeField(primary_key=True, auto_now_add=True)
+    user_id = models.ForeignKey('Friends', on_delete=models.CASCADE)
+    text = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.text

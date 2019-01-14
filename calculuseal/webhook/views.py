@@ -43,8 +43,8 @@ def media(request, timestamp):
         return HttpResponseBadRequest()
 
 def webhook(request):
-    logging.debug('request:')
-    logging.debug(vars(request))
+    # logging.debug('request:')
+    # logging.debug(vars(request))
 
     if request.method == 'POST':
         # get X-Line-Signature header value
@@ -97,6 +97,11 @@ def handle_text_message(event):
         reply_message(event.reply_token, ['當恁爸海豹體字典哦', words + '：' + str(result)])
     else:
         reply_message(event.reply_token, ['我聽不懂所以只能重複你說的話', words])
+
+    # logging into database
+    models.Message(
+        user_id=models.Friends.objects.filter(user_id=event.source.user_id)[0],
+        text=event.message.text).save()
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
