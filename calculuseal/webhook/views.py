@@ -86,7 +86,7 @@ def handle_text_message(event):
             calc_suc = False
     elif re.match(r'[a-zA-Z]+', words.replace(' ', '')):
         try:
-            result = yahoodict.lookup(words.replace(' ', ''))
+            result = yahoodict.lookup(words)
             dict_suc = True
         except:
             dict_suc = False

@@ -1,10 +1,20 @@
+import datetime
+
 from django.contrib import admin
 
+from calculuseal import settings
 from webhook import models
 
 @admin.register(models.Media)
 class MediaAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('show_timestamp', 'show_data', 'content_type')
+    change_list_template = 'admin/webhook/media/change_list.html'
+
+    def show_timestamp(self, obj):
+        return datetime.datetime.fromtimestamp(obj.timestamp / 1000).__str__()
+
+    def show_data(self, obj):
+        return f'<img src="https://{settings.SERVER_NAME}/media/{obj.timestamp}/">'
 
 @admin.register(models.Friends)
 class FriendsAdmin(admin.ModelAdmin):
