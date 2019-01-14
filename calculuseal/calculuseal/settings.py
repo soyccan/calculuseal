@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '-s3yt2k^ghv5$cj7xa0hdfzb_$(#*t9vbtgv@sd()e-pdcuiz4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # debug friendly
 # running locally with `LOCALAAAA=1 ./manage runserver`
