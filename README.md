@@ -125,7 +125,6 @@ linebot: https://www.oxxostudio.tw/articles/201701/line-bot.html
     - ![](https://i.imgur.com/euyDqC0.png)
     - ![](https://i.imgur.com/LrlxBD1.png)
     - ![](https://i.imgur.com/8Uqj8FV.png)
-    - ![](https://i.imgur.com/w0znAvg.png)
 - search Yahoo!(R) dictionary when user sends a English word or phrase
     - using BeautifulSoup to fetch the result
 - simple calculation when user sends equations
