@@ -124,7 +124,6 @@ linebot: https://www.oxxostudio.tw/articles/201701/line-bot.html
     - we build a backend web management interface: https://calculuseal.herokuapp.com/admin/
     - some information is concealed in case of privacy issues
     - ![](https://i.imgur.com/euyDqC0.png)
-    - ![](https://i.imgur.com/LrlxBD1.png)
     - ![](https://i.imgur.com/8Uqj8FV.png)
 - search Yahoo!(R) dictionary when user sends a English word or phrase
     - using BeautifulSoup to fetch the result
